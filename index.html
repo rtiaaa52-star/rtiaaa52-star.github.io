@@ -2,123 +2,144 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAHMUT STORE | Toko Serba Ada</title>
+<title>RAHMUT MINIMARKET - Online Shop</title>
 <style>
-body{margin:0;font-family:Arial;background:#f4f6f8}
-header{background:#1f2933;color:#fff;padding:25px;text-align:center}
-nav{background:#374151;padding:12px}
-nav ul{list-style:none;display:flex;justify-content:center;margin:0;padding:0}
-nav ul li{margin:0 15px}
-nav ul li a{color:white;text-decoration:none;font-weight:bold}
-.container{width:95%;margin:auto;padding:20px}
-h2{border-bottom:3px solid #10b981;padding-bottom:8px;color:#1f2933}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:20px}
-.card{background:white;padding:15px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);text-align:center}
-.card img{width:100%;height:180px;object-fit:cover;border-radius:8px}
-.price{color:#dc2626;font-weight:bold}
-button{margin-top:10px;padding:8px 15px;background:#10b981;border:none;color:white;border-radius:5px;cursor:pointer}
-button:hover{background:#059669}
-.order,.cart,.invoice{background:white;padding:20px;border-radius:10px;margin-top:30px}
-input,select,textarea{width:100%;padding:10px;margin-top:8px}
-.cart table,.invoice table{width:100%;border-collapse:collapse;margin-top:10px}
-.cart th,.cart td,.invoice th,.invoice td{border:1px solid #ddd;padding:8px;text-align:center}
-.cart th,.invoice th{background:#10b981;color:white}
-footer{background:#1f2933;color:white;text-align:center;padding:15px;margin-top:40px}
+body{font-family:Arial,sans-serif;margin:0;background:#f4f4f4}
+header{background:#0a7cff;color:#fff;padding:20px;text-align:center}
+nav{background:#036;display:flex;justify-content:center;gap:20px;padding:10px}
+nav a{color:white;text-decoration:none;font-weight:bold}
+.container{padding:20px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.card{background:#fff;padding:15px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.1);text-align:center}
+.card img{width:100%;height:200px;object-fit:cover;border-radius:6px}
+.card h3{font-size:16px;margin:10px 0}
+.price{color:green;font-weight:bold}
+button{padding:8px;border:none;border-radius:5px;cursor:pointer}
+.add{background:#0a7cff;color:white;width:100%}
+.cart{background:white;padding:15px;margin-top:30px;border-radius:8px}
+.cart table{width:100%;border-collapse:collapse}
+.cart th,.cart td{border-bottom:1px solid #ddd;padding:8px;text-align:center}
+.checkout{background:#25D366;color:white;width:100%;margin-top:10px;padding:10px;font-size:16px}
+input[type="number"]{width:60px;padding:5px;text-align:center}
+input[type="text"]{width:100%;padding:8px;margin:5px 0}
 </style>
+
+<script>
+let cart=[];
+
+function addToCart(name,price){
+let item=cart.find(p=>p.name===name);
+if(item){item.qty++;}
+else{cart.push({name,price,qty:1});}
+renderCart();
+}
+
+function renderCart(){
+let html="";
+let total=0;
+cart.forEach((p,i)=>{
+let subtotal=p.price*p.qty;
+total+=subtotal;
+html+=`<tr>
+<td>${p.name}</td>
+<td>Rp ${p.price.toLocaleString()}</td>
+<td><input type="number" value="${p.qty}" min="1" onchange="updateQty(${i},this.value)"></td>
+<td>Rp ${subtotal.toLocaleString()}</td>
+<td><button onclick="removeItem(${i})">X</button></td>
+</tr>`;
+});
+document.getElementById("cartBody").innerHTML=html;
+document.getElementById("total").innerText=total.toLocaleString();
+}
+
+function updateQty(i,value){
+cart[i].qty=parseInt(value);
+renderCart();
+}
+
+function removeItem(i){
+cart.splice(i,1);
+renderCart();
+}
+
+function checkout(){
+let nama=document.getElementById("nama").value.trim();
+let alamat=document.getElementById("alamat").value.trim();
+if(!nama||!alamat||cart.length==0){
+alert("Lengkapi data & keranjang!");
+return;
+}
+let pesan=`Halo RAHMUT MINIMARKET,%0A
+Nama: ${nama}%0A
+Alamat: ${alamat}%0A
+Pesanan:%0A`;
+let total=0;
+cart.forEach(p=>{
+pesan+=`- ${p.name} x${p.qty} = Rp ${(p.price*p.qty).toLocaleString()}%0A`;
+total+=p.price*p.qty;
+});
+pesan+=`TOTAL: Rp ${total.toLocaleString()}`;
+let wa="6281234567890"; // GANTI NOMOR WA ADMIN
+window.open(`https://wa.me/${wa}?text=${pesan}`);
+}
+</script>
 </head>
+
 <body>
 
 <header>
-<h1>RAHMUT STORE</h1>
-<p>Toko Baju, Perabot & Elektronik • Berdiri 2025</p>
+<h1>RAHMUT MINIMARKET</h1>
+<p>Toko Online Serba Ada | Berdiri Tahun 2025</p>
 </header>
 
 <nav>
-<ul>
-<li><a href="#baju">Baju</a></li>
-<li><a href="#rumah">Perabot</a></li>
-<li><a href="#elektronik">Elektronik</a></li>
-<li><a href="#keranjang">Keranjang</a></li>
-<li><a href="#invoice">Struk</a></li>
-</ul>
+<a href="#fashion">Fashion</a>
+<a href="#perabot">Perabot Rumah</a>
+<a href="#dapur">Dapur & Elektronik</a>
+<a href="#cart">Keranjang</a>
 </nav>
 
 <div class="container">
 
-<section id="baju">
-<h2>Toko Baju</h2>
+<h2 id="fashion">👕 Fashion</h2>
 <div class="products">
-<div class="card"><img src="https://source.unsplash.com/400x400/?plain-tshirt"><h3>Kaos Polos</h3><p class="price">Rp45.000</p><button onclick="tambah('Kaos Polos',45000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?men-shirt"><h3>Kemeja Pria</h3><p class="price">Rp95.000</p><button onclick="tambah('Kemeja Pria',95000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?muslim-hijab"><h3>Hijab</h3><p class="price">Rp35.000</p><button onclick="tambah('Hijab',35000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?women-dress"><h3>Dress Wanita</h3><p class="price">Rp150.000</p><button onclick="tambah('Dress Wanita',150000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?hoodie-jacket"><h3>Jaket Hoodie</h3><p class="price">Rp120.000</p><button onclick="tambah('Jaket Hoodie',120000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?blue-jeans"><h3>Celana Jeans</h3><p class="price">Rp110.000</p><button onclick="tambah('Celana Jeans',110000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?plain+tshirt"><h3>Kaos Polos</h3><p class="price">Rp 50.000</p><button class="add" onclick="addToCart('Kaos Polos',50000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?men+shirt"><h3>Kemeja Pria</h3><p class="price">Rp 120.000</p><button class="add" onclick="addToCart('Kemeja Pria',120000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?hijab"><h3>Hijab</h3><p class="price">Rp 45.000</p><button class="add" onclick="addToCart('Hijab',45000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?women+dress"><h3>Dress Wanita</h3><p class="price">Rp 150.000</p><button class="add" onclick="addToCart('Dress Wanita',150000)">Tambah</button></div>
 </div>
-</section>
 
-<section id="rumah">
-<h2>Perabot Rumah Tangga</h2>
+<h2 id="perabot">🏠 Perabot Rumah</h2>
 <div class="products">
-<div class="card"><img src="https://source.unsplash.com/400x400/?gas-stove-kitchen"><h3>Kompor Gas</h3><p class="price">Rp350.000</p><button onclick="tambah('Kompor Gas',350000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?rice-cooker-kitchen"><h3>Rice Cooker</h3><p class="price">Rp280.000</p><button onclick="tambah('Rice Cooker',280000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?cooking-pot-kitchen"><h3>Set Panci</h3><p class="price">Rp200.000</p><button onclick="tambah('Set Panci',200000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?wooden-table-furniture"><h3>Meja Kayu</h3><p class="price">Rp450.000</p><button onclick="tambah('Meja Kayu',450000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?cleaning-tools-house"><h3>Sapu & Pel</h3><p class="price">Rp55.000</p><button onclick="tambah('Sapu & Pel',55000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?storage-rack-home"><h3>Rak Serbaguna</h3><p class="price">Rp180.000</p><button onclick="tambah('Rak Serbaguna',180000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?chair+furniture"><h3>Kursi</h3><p class="price">Rp 200.000</p><button class="add" onclick="addToCart('Kursi',200000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?table+furniture"><h3>Meja</h3><p class="price">Rp 350.000</p><button class="add" onclick="addToCart('Meja',350000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?wardrobe"><h3>Lemari</h3><p class="price">Rp 1.200.000</p><button class="add" onclick="addToCart('Lemari',1200000)">Tambah</button></div>
 </div>
-</section>
 
-<section id="elektronik">
-<h2>Elektronik</h2>
+<h2 id="dapur">🍳 Dapur & Elektronik</h2>
 <div class="products">
-<div class="card"><img src="https://source.unsplash.com/400x400/?electric-fan"><h3>Kipas Angin</h3><p class="price">Rp220.000</p><button onclick="tambah('Kipas Angin',220000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?blender-kitchen"><h3>Blender</h3><p class="price">Rp190.000</p><button onclick="tambah('Blender',190000)">Tambah</button></div>
-<div class="card"><img src="https://source.unsplash.com/400x400/?electric-iron"><h3>Setrika Listrik</h3><p class="price">Rp160.000</p><button onclick="tambah('Setrika Listrik',160000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?rice+cooker"><h3>Rice Cooker</h3><p class="price">Rp 450.000</p><button class="add" onclick="addToCart('Rice Cooker',450000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?gas+stove"><h3>Kompor Gas</h3><p class="price">Rp 380.000</p><button class="add" onclick="addToCart('Kompor Gas',380000)">Tambah</button></div>
+<div class="card"><img src="https://source.unsplash.com/400x400/?blender"><h3>Blender</h3><p class="price">Rp 300.000</p><button class="add" onclick="addToCart('Blender',300000)">Tambah</button></div>
 </div>
-</section>
 
-<section id="keranjang" class="cart">
-<h2>Keranjang Belanja</h2>
+<div class="cart" id="cart">
+<h2>🛒 Keranjang Belanja</h2>
 <table>
-<thead><tr><th>Produk</th><th>Harga</th><th>Jumlah</th><th>Subtotal</th></tr></thead>
-<tbody id="cart"></tbody>
+<thead><tr><th>Produk</th><th>Harga</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+<tbody id="cartBody"></tbody>
 </table>
 <h3>Total: Rp <span id="total">0</span></h3>
-</section>
-
-<section id="invoice" class="invoice">
-<h2>Struk Pembelian</h2>
-<p id="struk"></p>
-</section>
+<input type="text" id="nama" placeholder="Nama Pemesan">
+<input type="text" id="alamat" placeholder="Alamat Lengkap">
+<button class="checkout" onclick="checkout()">Checkout via WhatsApp</button>
+</div>
 
 </div>
 
 <footer>
-<p>&copy; 2025 RAHMUT STORE</p>
+© 2025 RAHMUT MINIMARKET | Sistem Pemesanan Online Aktif
 </footer>
-
-<script>
-let keranjang=[];
-function tambah(nama,harga){
-let item=keranjang.find(i=>i.nama===nama);
-if(item){item.jumlah++;}
-else{keranjang.push({nama,harga,jumlah:1});}
-render();
-}
-function render(){
-let tbody=document.getElementById('cart');
-tbody.innerHTML='';
-let total=0;
-keranjang.forEach(i=>{
-let sub=i.harga*i.jumlah; total+=sub;
-tbody.innerHTML+=`<tr><td>${i.nama}</td><td>Rp${i.harga}</td><td>${i.jumlah}</td><td>Rp${sub}</td></tr>`;
-});
-document.getElementById('total').innerText=total;
-document.getElementById('struk').innerText='Total Pembayaran: Rp '+total;
-}
-</script>
 
 </body>
 </html>
